@@ -1,0 +1,5 @@
+password
+*.old
+*.bck
+*.swp
+*.tmp
