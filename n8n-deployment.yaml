@@ -55,6 +55,28 @@ spec:
               value: http
             - name: N8N_PORT
               value: "5678"
+            - name: EXTERNAL_HOOK_FILES
+              value: "/home/node/.n8n/hooks.js"
+            - name: OIDC_ISSUER_URL
+              value: "https://authentik.calfolguera.freemyip.com/application/o/n8n/"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-authentik-secret
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-authentik-secret
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_REDIRECT_URI
+              value: "https://n8n.calfolguera.freemyip.com/auth/oidc/callback"
+            - name: N8N_ADDITIONAL_NON_UI_ROUTES
+              value: "auth"
+            - name: EXTERNAL_FRONTEND_HOOKS_URLS
+              value: "/assets/oidc-frontend-hook.js"
+            - name: OIDC_SCOPES
+              value: "openid email profile"  
           image: n8nio/n8n:latest
           name: n8n
           imagePullPolicy: Always
@@ -66,8 +88,11 @@ spec:
             limits:
               memory: "500Mi"
           volumeMounts:
-            - mountPath: /home/node/.n8n
-              name: n8n-claim0
+            - name: n8n-claim0
+              mountPath: /home/node/.n8n
+            - name: n8n-authentik-hook
+              mountPath: /home/node/.n8n/hooks.js
+              subPath: hooks.js
       restartPolicy: Always
       volumes:
         - name: n8n-claim0
@@ -79,3 +104,7 @@ spec:
         - name: postgres-secret
           secret:
             secretName: postgres-secret
+        - name: n8n-authentik-hook
+          configMap:
+            name: n8n-authentik-hook
+
