@@ -87,7 +87,7 @@ spec:
             requests:
               memory: "250Mi"
             limits:
-              memory: "500Mi"
+              memory: "1024Mi"
           volumeMounts:
             - name: n8n-claim0
               mountPath: /home/node/.n8n
